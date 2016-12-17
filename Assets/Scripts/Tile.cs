@@ -36,6 +36,8 @@ public class Tile : MonoBehaviour {
     Vector2 touchPos;
     Vector3 worldPoint;
 
+    float mBlockMoveSpeed = .5f;
+
     void Start ()
     {
         mRbody = GetComponent<Rigidbody2D>();
@@ -43,7 +45,7 @@ public class Tile : MonoBehaviour {
 	
     void FixedUpdate()
     {
-        if (!mMoving || !mFinished)
+        if (!mFinished)
         {
             mRbody.velocity = (new Vector2(0, -mSpeed));
         }
@@ -55,30 +57,26 @@ public class Tile : MonoBehaviour {
 
         if (mInArea && !mFinished)
         {
-            //if(Input.touchCount > 0)
-            //{
-            //    foreach (Touch touch in Input.touches)
-            //    {
-            //        Vector3 worldPoint = Camera.main.ScreenToWorldPoint(touch.position);
-            //        Vector2 touchPos = new Vector2(worldPoint.x, worldPoint.y);
-            //        Collider2D hit = Physics2D.OverlapPoint(touchPos);
-
-            //        if(hit.tag == "Tile" && GameManager.sInstance.mInputController.thumbDown && !GameManager.sInstance.mTileHeld)
-            //        {
-            //            GameManager.sInstance.mTileHeld = true;
-            //            touchPos = transform.position;
-            //            mMoving = true;
-            //            mInArea = false;
-            //            break;
-            //        }
-
-            //    }
-            //}
-
-            if(GameManager.sInstance.mSwiped == true)
+            if(mType != TileType.Down && GameManager.sInstance.mScore < 10)
             {
+                if(mType == TileType.Left)
+                {
+                    GameManager.sInstance.mLeftBar.material = GameManager.sInstance.mDecideColour;
+                }
+                if (mType == TileType.Right)
+                {
+                    GameManager.sInstance.mRightBar.material = GameManager.sInstance.mDecideColour;
+                }
+            }
 
-                if(GameManager.sInstance.mInputController.mSwipeDir == SwipeDir.Left)
+            //GameManager.sInstance.mLeftBar
+
+            if (GameManager.sInstance.mSwiped == true)
+            {
+                GameManager.sInstance.mLeftBar.material = GameManager.sInstance.mNormalColour;
+                GameManager.sInstance.mRightBar.material = GameManager.sInstance.mNormalColour;
+
+                if (GameManager.sInstance.mInputController.mSwipeDir == SwipeDir.Left)
                 {
                     mCurrDecision = TileType.Left;
                 }
@@ -90,12 +88,10 @@ public class Tile : MonoBehaviour {
                 //decision made
                 if (mCurrDecision == TileType.Down)
                 {
-                    print("here");
                     if (mType == TileType.Down)
                     {
                         //pass
                         GameManager.sInstance.AddPoints(1);
-                        transform.position = new Vector3(GameManager.sInstance.mTileSpawner.mSpawnPoint.position.x, transform.position.y, transform.position.z);
                     }
                     else
                     {
@@ -111,7 +107,6 @@ public class Tile : MonoBehaviour {
                     {
                         //pass
                         GameManager.sInstance.AddPoints(1);
-                        transform.position = new Vector3(GameManager.sInstance.mTileSpawner.mLeftDecide.transform.position.x, transform.position.y, transform.position.z);
                     }
                     else
                     {
@@ -126,7 +121,6 @@ public class Tile : MonoBehaviour {
                     {
                         //pass
                         GameManager.sInstance.AddPoints(1);
-                        transform.position = new Vector3(GameManager.sInstance.mTileSpawner.mRightDecide.transform.position.x, transform.position.y, transform.position.z);
                     }
                     else
                     {
@@ -145,30 +139,26 @@ public class Tile : MonoBehaviour {
             }
             else
             {
-                //delt with after it passes the bottom
 
-                //print("here");
-                //if (mType == TileType.Down)
-                //{
-                //    //pass
-                //    GameManager.sInstance.AddPoints(1);
-                //    transform.position = new Vector3(GameManager.sInstance.mTileSpawner.mSpawnPoint.position.x, transform.position.y, transform.position.z);
-                //}
-                //else
-                //{
-                //    //fail
-                //    Destroy(this.gameObject);
-                //}
-
-                //mFinished = true;
-                //mMoving = false;
-                //mInArea = false;
-
-                //GameManager.sInstance.mSwiped = false;
-                //GameManager.sInstance.mTileHeld = false;
 
             }
 
+        }
+
+        if (mFinished)
+        {
+            if (mType == TileType.Down)
+            {
+                transform.position = Vector3.Lerp(transform.position, new Vector3(GameManager.sInstance.mTileSpawner.mSpawnPoint.position.x, transform.position.y, transform.position.z), mBlockMoveSpeed);
+            }
+            if (mType == TileType.Left)
+            {
+                transform.position = Vector3.Lerp(transform.position, new Vector3(GameManager.sInstance.mTileSpawner.mLeftDecide.transform.position.x, transform.position.y, transform.position.z), mBlockMoveSpeed);
+            }
+            if (mType == TileType.Right)
+            {
+                transform.position = Vector3.Lerp(transform.position, new Vector3(GameManager.sInstance.mTileSpawner.mRightDecide.transform.position.x, transform.position.y, transform.position.z), mBlockMoveSpeed);
+            }
         }
 
         //if (mMoving)

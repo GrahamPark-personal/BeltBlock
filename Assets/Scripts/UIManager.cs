@@ -19,7 +19,10 @@ public class UIManager : MonoBehaviour {
 
     void Start ()
     {
-		
+        if (PlayerPrefs.HasKey("HighScore"))
+        {
+            mBestScoreNum = PlayerPrefs.GetInt("HighScore");
+        }
 	}
 	
 

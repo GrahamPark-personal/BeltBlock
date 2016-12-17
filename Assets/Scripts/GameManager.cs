@@ -13,6 +13,15 @@ public class GameManager : MonoBehaviour {
     public UIManager mUIManager;
 
 
+    public Renderer mLeftBar;
+    public Renderer mMiddleBar;
+    public Renderer mRightBar;
+
+    public Material mDecideColour; 
+
+    [HideInInspector]
+    public Material mNormalColour;
+
     [HideInInspector]
     public int mScore = 0;
 
@@ -55,7 +64,7 @@ public class GameManager : MonoBehaviour {
     {
         mStartSpeed = mConveySpeed;
         mTime = Time.time + mInterval;
-
+        mNormalColour = mLeftBar.material;
     }
 
     public void AddPoints(int amount)
@@ -107,6 +116,7 @@ public class GameManager : MonoBehaviour {
         mResetTimer = Time.time + 0.1f;
         mUIManager.SetEndScreenVisible(false);
         mConveySpeed = mStartSpeed;
+        mTileSpawner.mInerval = mTileSpawner.mStartInt; 
         mScore = 0;
         mUIManager.SetStartScreenVisible(true);
         mPlayingGame = false;
@@ -119,6 +129,9 @@ public class GameManager : MonoBehaviour {
         mPlayingGame = false;
         mUIManager.SetEndScreenVisible(true);
 
+        mRightBar.material = mNormalColour;
+        mLeftBar.material = mNormalColour;
+
         GameObject[] mAllTiles = GameObject.FindGameObjectsWithTag("Tile");
 
         foreach (GameObject obj in mAllTiles)
@@ -130,6 +143,7 @@ public class GameManager : MonoBehaviour {
         {
             mUIManager.mBestScoreNum = mUIManager.mScoreNum;
         }
+        PlayerPrefs.SetInt("HighScore", mUIManager.mBestScoreNum);
     }
 
     public void StartGame()
